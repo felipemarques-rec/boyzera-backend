@@ -1,0 +1,30 @@
+export declare class User {
+    id: string;
+    telegramId: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    nickname: string;
+    avatarUrl: string;
+    followers: bigint;
+    level: number;
+    energy: number;
+    maxEnergy: number;
+    energyRegenRate: number;
+    profitPerHour: number;
+    tapMultiplier: number;
+    gems: number;
+    tokensBz: number;
+    totalTaps: bigint;
+    combo: number;
+    engagement: number;
+    lastTapAt: Date;
+    lastEnergyUpdate: Date;
+    lastLoginAt: Date;
+    referrerId: string;
+    seasonId: string;
+    isBanned: boolean;
+    banReason: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
