@@ -34,7 +34,7 @@ export class LevelService {
     return this.levelRepository.findOne({ where: { value } });
   }
 
-  async calculateLevel(followers: bigint): Promise<Level> {
+  async calculateLevel(followers: bigint): Promise<Level | null> {
     // Convert BigInt to string for the query to handle it properly
     const followersStr = followers.toString();
 
@@ -44,7 +44,7 @@ export class LevelService {
       .orderBy('level.value', 'DESC')
       .getOne();
 
-    return level || (await this.getLevelByValue(1))!;
+    return level || (await this.getLevelByValue(1));
   }
 
   async getNextLevel(currentLevel: number): Promise<Level | null> {
@@ -55,6 +55,15 @@ export class LevelService {
 
   async checkLevelUp(user: User): Promise<LevelUpResult> {
     const newLevelData = await this.calculateLevel(user.followers);
+
+    if (!newLevelData) {
+      return {
+        leveledUp: false,
+        previousLevel: user.level,
+        newLevel: user.level,
+        rewards: null,
+      };
+    }
 
     if (newLevelData.value > user.level) {
       const rewards = {
