@@ -10,11 +10,11 @@ describe('LevelService', () => {
   let levelRepository: Repository<Level>;
 
   const mockLevels: Level[] = [
-    createMockLevel(1, 'Novato', BigInt(0), 1000, 1),
-    createMockLevel(2, 'Iniciante', BigInt(1000), 1100, 1),
-    createMockLevel(3, 'Aprendiz', BigInt(5000), 1200, 2),
-    createMockLevel(5, 'Intermediario', BigInt(50000), 1500, 3),
-    createMockLevel(10, 'Experiente', BigInt(500000), 2000, 5),
+    createMockLevel(1, 'Zé Ninguém', BigInt(0), 1000, 1),
+    createMockLevel(2, 'Microcelebridade do Bairro', BigInt(5000), 1100, 2),
+    createMockLevel(3, 'Trend do Instagram', BigInt(50000), 1200, 3),
+    createMockLevel(4, 'Dono do Hype', BigInt(250000), 1350, 4),
+    createMockLevel(5, 'Fenômeno da Internet', BigInt(1000000), 1500, 5),
   ];
 
   beforeEach(async () => {
@@ -78,7 +78,7 @@ describe('LevelService', () => {
 
   describe('checkLevelUp', () => {
     it('should detect level up when followers exceed threshold', async () => {
-      const user = createMockUser({ level: 1, followers: BigInt(1500) });
+      const user = createMockUser({ level: 1, followers: BigInt(6000) });
 
       jest.spyOn(levelRepository, 'findOne').mockResolvedValue(mockLevels[1]);
       jest.spyOn(levelRepository, 'find').mockResolvedValue([mockLevels[1]]);
@@ -91,7 +91,7 @@ describe('LevelService', () => {
     });
 
     it('should not level up when under threshold', async () => {
-      const user = createMockUser({ level: 1, followers: BigInt(500) });
+      const user = createMockUser({ level: 1, followers: BigInt(3000) });
 
       jest.spyOn(levelRepository, 'findOne').mockResolvedValue(mockLevels[0]);
 
@@ -105,18 +105,41 @@ describe('LevelService', () => {
 
   describe('getProgressToNextLevel', () => {
     it('should calculate progress correctly', async () => {
-      const user = createMockUser({ level: 1, followers: BigInt(500) });
+      // User at level 1 with 2500 followers (50% progress to level 2)
+      const user = createMockUser({ level: 1, followers: BigInt(2500) });
 
       jest
         .spyOn(levelRepository, 'findOne')
-        .mockResolvedValueOnce(mockLevels[0])
-        .mockResolvedValueOnce(mockLevels[1]);
+        .mockResolvedValueOnce(mockLevels[0]) // level 1: 0 followers
+        .mockResolvedValueOnce(mockLevels[1]); // level 2: 5000 followers
 
       const result = await service.getProgressToNextLevel(user);
 
-      expect(result.current).toBe(BigInt(500));
-      expect(result.required).toBe(BigInt(1000));
+      // current = 2500 - 0 = 2500
+      // required = 5000 - 0 = 5000
+      // percentage = 2500 / 5000 * 100 = 50%
+      expect(result.current).toBe(BigInt(2500));
+      expect(result.required).toBe(BigInt(5000));
       expect(result.percentage).toBe(50);
+    });
+
+    it('should reset progress when user levels up', async () => {
+      // User just reached level 2 with 6000 followers
+      const user = createMockUser({ level: 2, followers: BigInt(6000) });
+
+      jest
+        .spyOn(levelRepository, 'findOne')
+        .mockResolvedValueOnce(mockLevels[1]) // level 2: 5000 followers
+        .mockResolvedValueOnce(mockLevels[2]); // level 3: 50000 followers
+
+      const result = await service.getProgressToNextLevel(user);
+
+      // current = 6000 - 5000 = 1000 (progress resets!)
+      // required = 50000 - 5000 = 45000
+      // percentage = 1000 / 45000 * 100 = ~2.2%
+      expect(result.current).toBe(BigInt(1000));
+      expect(result.required).toBe(BigInt(45000));
+      expect(result.percentage).toBe(2);
     });
 
     it('should return 100% for max level', async () => {
