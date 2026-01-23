@@ -35,12 +35,11 @@ export class LevelService {
   }
 
   async calculateLevel(followers: bigint): Promise<Level | null> {
-    // Convert BigInt to string for the query to handle it properly
-    const followersStr = followers.toString();
-
     const level = await this.levelRepository
       .createQueryBuilder('level')
-      .where('level.requiredFollowers <= :followers', { followers: followersStr })
+      .where('CAST(level.requiredFollowers AS BIGINT) <= CAST(:followers AS BIGINT)', {
+        followers: followers.toString(),
+      })
       .orderBy('level.value', 'DESC')
       .getOne();
 

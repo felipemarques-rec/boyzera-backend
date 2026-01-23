@@ -17,6 +17,12 @@ describe('LevelService', () => {
     createMockLevel(5, 'Fenômeno da Internet', BigInt(1000000), 1500, 5),
   ];
 
+  const mockQueryBuilder = {
+    where: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    getOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -26,6 +32,7 @@ describe('LevelService', () => {
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
+            createQueryBuilder: jest.fn(() => mockQueryBuilder),
           },
         },
       ],
@@ -33,6 +40,10 @@ describe('LevelService', () => {
 
     service = module.get<LevelService>(LevelService);
     levelRepository = module.get<Repository<Level>>(getRepositoryToken(Level));
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('getAllLevels', () => {
@@ -60,19 +71,37 @@ describe('LevelService', () => {
 
   describe('calculateLevel', () => {
     it('should return level 1 for 0 followers', async () => {
+      mockQueryBuilder.getOne.mockResolvedValue(mockLevels[0]);
+
+      const result = await service.calculateLevel(BigInt(0));
+
+      expect(result.value).toBe(1);
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
+        'CAST(level.requiredFollowers AS BIGINT) <= CAST(:followers AS BIGINT)',
+        { followers: '0' },
+      );
+      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('level.value', 'DESC');
+    });
+
+    it('should return level 2 for 5000 followers', async () => {
+      mockQueryBuilder.getOne.mockResolvedValue(mockLevels[1]); // Level 2
+
+      const result = await service.calculateLevel(BigInt(5000));
+
+      expect(result.value).toBe(2);
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
+        'CAST(level.requiredFollowers AS BIGINT) <= CAST(:followers AS BIGINT)',
+        { followers: '5000' },
+      );
+    });
+
+    it('should return level 1 as fallback when query returns null', async () => {
+      mockQueryBuilder.getOne.mockResolvedValue(null);
       jest.spyOn(levelRepository, 'findOne').mockResolvedValue(mockLevels[0]);
 
       const result = await service.calculateLevel(BigInt(0));
 
       expect(result.value).toBe(1);
-    });
-
-    it('should return correct level for followers threshold', async () => {
-      jest.spyOn(levelRepository, 'findOne').mockResolvedValue(mockLevels[2]);
-
-      const result = await service.calculateLevel(BigInt(5000));
-
-      expect(result.value).toBe(3);
     });
   });
 
@@ -80,7 +109,7 @@ describe('LevelService', () => {
     it('should detect level up when followers exceed threshold', async () => {
       const user = createMockUser({ level: 1, followers: BigInt(6000) });
 
-      jest.spyOn(levelRepository, 'findOne').mockResolvedValue(mockLevels[1]);
+      mockQueryBuilder.getOne.mockResolvedValue(mockLevels[1]);
       jest.spyOn(levelRepository, 'find').mockResolvedValue([mockLevels[1]]);
 
       const result = await service.checkLevelUp(user);
@@ -93,7 +122,19 @@ describe('LevelService', () => {
     it('should not level up when under threshold', async () => {
       const user = createMockUser({ level: 1, followers: BigInt(3000) });
 
-      jest.spyOn(levelRepository, 'findOne').mockResolvedValue(mockLevels[0]);
+      mockQueryBuilder.getOne.mockResolvedValue(mockLevels[0]);
+
+      const result = await service.checkLevelUp(user);
+
+      expect(result.leveledUp).toBe(false);
+      expect(result.newLevel).toBe(1);
+      expect(result.rewards).toBeNull();
+    });
+
+    it('should not level up when followers is 0', async () => {
+      const user = createMockUser({ level: 1, followers: BigInt(0) });
+
+      mockQueryBuilder.getOne.mockResolvedValue(mockLevels[0]);
 
       const result = await service.checkLevelUp(user);
 
