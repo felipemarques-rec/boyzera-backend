@@ -137,6 +137,9 @@ export class TapUseCase {
       });
     }
 
+    // Calculate level progress for response
+    const levelProgress = await this.levelService.getProgressToNextLevel(user);
+
     const response: TapResponseDto = {
       success: true,
       tapsProcessed: tapCount,
@@ -146,6 +149,12 @@ export class TapUseCase {
       maxEnergy: user.maxEnergy,
       combo: user.combo,
       comboMultiplier: Math.round(comboMultiplier * 100) / 100,
+      levelProgress: {
+        currentLevel: user.level,
+        progress: levelProgress.current.toString(),
+        required: levelProgress.required.toString(),
+        percentage: levelProgress.percentage,
+      },
     };
 
     if (levelUpResult.leveledUp && levelUpResult.rewards) {
