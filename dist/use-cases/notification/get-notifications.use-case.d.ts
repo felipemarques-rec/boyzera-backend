@@ -5,6 +5,18 @@ export interface GetNotificationsOptions {
     offset?: number;
     unreadOnly?: boolean;
 }
+export interface CharacterInfo {
+    id: string;
+    name: string;
+    displayName: string;
+    avatarUrl: string | null;
+    area: string;
+    customColors?: {
+        primary?: string;
+        secondary?: string;
+        accent?: string;
+    };
+}
 export interface NotificationResponse {
     id: string;
     type: string;
@@ -15,6 +27,7 @@ export interface NotificationResponse {
     actionUrl: string | null;
     isRead: boolean;
     createdAt: Date;
+    character?: CharacterInfo | null;
 }
 export interface NotificationsResult {
     notifications: NotificationResponse[];

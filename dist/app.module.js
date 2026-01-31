@@ -27,6 +27,10 @@ const minigame_module_1 = require("./infrastructure/minigame/minigame.module");
 const shop_module_1 = require("./infrastructure/shop/shop.module");
 const blockchain_module_1 = require("./infrastructure/blockchain/blockchain.module");
 const squad_module_1 = require("./infrastructure/squad/squad.module");
+const roulette_module_1 = require("./infrastructure/roulette/roulette.module");
+const social_module_1 = require("./infrastructure/social/social.module");
+const raffle_module_1 = require("./infrastructure/raffle/raffle.module");
+const character_module_1 = require("./infrastructure/character/character.module");
 const admin_module_1 = require("./admin/admin.module");
 let AppModule = class AppModule {
 };
@@ -56,6 +60,10 @@ exports.AppModule = AppModule = __decorate([
             shop_module_1.ShopModule,
             blockchain_module_1.BlockchainModule,
             squad_module_1.SquadModule,
+            roulette_module_1.RouletteModule,
+            social_module_1.SocialModule,
+            raffle_module_1.RaffleModule,
+            character_module_1.CharacterModule,
             admin_module_1.AdminModule,
         ],
         controllers: [app_controller_1.AppController],

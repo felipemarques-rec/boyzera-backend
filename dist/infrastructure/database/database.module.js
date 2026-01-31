@@ -28,6 +28,19 @@ const user_booster_entity_1 = require("../../domain/entities/user-booster.entity
 const wallet_connection_entity_1 = require("../../domain/entities/wallet-connection.entity");
 const token_distribution_entity_1 = require("../../domain/entities/token-distribution.entity");
 const squad_entity_1 = require("../../domain/entities/squad.entity");
+const roulette_prize_entity_1 = require("../../domain/entities/roulette-prize.entity");
+const roulette_spin_entity_1 = require("../../domain/entities/roulette-spin.entity");
+const collaboration_entity_1 = require("../../domain/entities/collaboration.entity");
+const user_collaboration_entity_1 = require("../../domain/entities/user-collaboration.entity");
+const interview_entity_1 = require("../../domain/entities/interview.entity");
+const user_interview_entity_1 = require("../../domain/entities/user-interview.entity");
+const podcast_entity_1 = require("../../domain/entities/podcast.entity");
+const user_podcast_entity_1 = require("../../domain/entities/user-podcast.entity");
+const raffle_entity_1 = require("../../domain/entities/raffle.entity");
+const raffle_task_entity_1 = require("../../domain/entities/raffle-task.entity");
+const raffle_ticket_entity_1 = require("../../domain/entities/raffle-ticket.entity");
+const user_raffle_task_entity_1 = require("../../domain/entities/user-raffle-task.entity");
+const character_entity_1 = require("../../domain/entities/character.entity");
 const admin_user_entity_1 = require("../../admin/entities/admin-user.entity");
 const app_config_entity_1 = require("../../admin/entities/app-config.entity");
 let DatabaseModule = class DatabaseModule {
@@ -66,6 +79,19 @@ exports.DatabaseModule = DatabaseModule = __decorate([
                         token_distribution_entity_1.TokenDistribution,
                         squad_entity_1.Squad,
                         squad_entity_1.SquadMember,
+                        roulette_prize_entity_1.RoulettePrize,
+                        roulette_spin_entity_1.RouletteSpin,
+                        collaboration_entity_1.Collaboration,
+                        user_collaboration_entity_1.UserCollaboration,
+                        interview_entity_1.Interview,
+                        user_interview_entity_1.UserInterview,
+                        podcast_entity_1.Podcast,
+                        user_podcast_entity_1.UserPodcast,
+                        raffle_entity_1.Raffle,
+                        raffle_task_entity_1.RaffleTask,
+                        raffle_ticket_entity_1.RaffleTicket,
+                        user_raffle_task_entity_1.UserRaffleTask,
+                        character_entity_1.Character,
                         admin_user_entity_1.AdminUser,
                         app_config_entity_1.AppConfig,
                     ],

@@ -21,6 +21,10 @@ export declare class User {
     lastTapAt: Date;
     lastEnergyUpdate: Date;
     lastLoginAt: Date;
+    loginStreak: number;
+    lastStreakDate: Date;
+    canSpinRoulette: boolean;
+    lastRouletteSpinAt: Date;
     referrerId: string;
     seasonId: string;
     isBanned: boolean;

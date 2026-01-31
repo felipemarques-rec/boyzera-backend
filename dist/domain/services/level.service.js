@@ -46,6 +46,14 @@ let LevelService = class LevelService {
     }
     async checkLevelUp(user) {
         const newLevelData = await this.calculateLevel(user.followers);
+        if (!newLevelData) {
+            return {
+                leveledUp: false,
+                previousLevel: user.level,
+                newLevel: user.level,
+                rewards: null,
+            };
+        }
         if (newLevelData.value > user.level) {
             const rewards = {
                 gems: 0,

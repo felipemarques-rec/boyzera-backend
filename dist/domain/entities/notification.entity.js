@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Notification = exports.NotificationType = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
+const character_entity_1 = require("./character.entity");
 var NotificationType;
 (function (NotificationType) {
     NotificationType["LEVEL_UP"] = "level_up";
@@ -37,6 +38,8 @@ let Notification = class Notification {
     isRead;
     readAt;
     actionUrl;
+    characterId;
+    character;
     createdAt;
 };
 exports.Notification = Notification;
@@ -88,6 +91,15 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Notification.prototype, "actionUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "characterId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => character_entity_1.Character, { nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'characterId' }),
+    __metadata("design:type", character_entity_1.Character)
+], Notification.prototype, "character", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

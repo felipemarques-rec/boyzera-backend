@@ -50,6 +50,7 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
+const event_emitter_1 = require("@nestjs/event-emitter");
 const crypto = __importStar(require("crypto"));
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../../domain/entities/user.entity");
@@ -57,10 +58,12 @@ let AuthService = class AuthService {
     userRepository;
     jwtService;
     configService;
-    constructor(userRepository, jwtService, configService) {
+    eventEmitter;
+    constructor(userRepository, jwtService, configService, eventEmitter) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.configService = configService;
+        this.eventEmitter = eventEmitter;
     }
     async validateTelegramData(initData) {
         const urlParams = new URLSearchParams(initData);
@@ -146,6 +149,7 @@ let AuthService = class AuthService {
         const payload = { sub: user.id, username: user.username };
         const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
         const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+        this.eventEmitter.emit('user.login', { userId: user.id });
         return {
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -171,6 +175,7 @@ exports.AuthService = AuthService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         jwt_1.JwtService,
-        config_1.ConfigService])
+        config_1.ConfigService,
+        event_emitter_1.EventEmitter2])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map
