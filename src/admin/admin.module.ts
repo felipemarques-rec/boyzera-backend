@@ -14,6 +14,15 @@ import { Referral } from '../domain/entities/referral.entity';
 import { Product } from '../domain/entities/product.entity';
 import { Squad, SquadMember } from '../domain/entities/squad.entity';
 import { Challenge } from '../domain/entities/challenge.entity';
+import { RoulettePrize } from '../domain/entities/roulette-prize.entity';
+import { RouletteSpin } from '../domain/entities/roulette-spin.entity';
+import { Raffle } from '../domain/entities/raffle.entity';
+import { RaffleTask } from '../domain/entities/raffle-task.entity';
+import { RaffleTicket } from '../domain/entities/raffle-ticket.entity';
+import { Collaboration } from '../domain/entities/collaboration.entity';
+import { Interview } from '../domain/entities/interview.entity';
+import { Podcast } from '../domain/entities/podcast.entity';
+import { Character } from '../domain/entities/character.entity';
 
 // Services
 import { AdminAuthService } from './services/admin-auth.service';
@@ -32,6 +41,10 @@ import { AdminReferralsController } from './controllers/admin-referrals.controll
 import { AdminProductsController } from './controllers/admin-products.controller';
 import { AdminSquadsController } from './controllers/admin-squads.controller';
 import { AdminChallengesController } from './controllers/admin-challenges.controller';
+import { AdminRouletteController } from './controllers/admin-roulette.controller';
+import { AdminRafflesController } from './controllers/admin-raffles.controller';
+import { AdminSocialController } from './controllers/admin-social.controller';
+import { AdminCharactersController } from './controllers/admin-characters.controller';
 
 @Module({
   imports: [
@@ -47,6 +60,15 @@ import { AdminChallengesController } from './controllers/admin-challenges.contro
       Squad,
       SquadMember,
       Challenge,
+      RoulettePrize,
+      RouletteSpin,
+      Raffle,
+      RaffleTask,
+      RaffleTicket,
+      Collaboration,
+      Interview,
+      Podcast,
+      Character,
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -70,6 +92,10 @@ import { AdminChallengesController } from './controllers/admin-challenges.contro
     AdminProductsController,
     AdminSquadsController,
     AdminChallengesController,
+    AdminRouletteController,
+    AdminRafflesController,
+    AdminSocialController,
+    AdminCharactersController,
   ],
   providers: [AdminAuthService, AdminAuthGuard],
   exports: [AdminAuthService, AdminAuthGuard],
