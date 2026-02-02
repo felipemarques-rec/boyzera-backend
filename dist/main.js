@@ -16,6 +16,7 @@ async function bootstrap() {
             /\.ngrok-free\.app$/,
             /\.ngrok\.io$/,
             /\.trycloudflare\.com$/,
+            /\.vercel\.app$/,
         ].filter(Boolean),
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

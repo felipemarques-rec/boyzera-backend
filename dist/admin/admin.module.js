@@ -21,6 +21,15 @@ const referral_entity_1 = require("../domain/entities/referral.entity");
 const product_entity_1 = require("../domain/entities/product.entity");
 const squad_entity_1 = require("../domain/entities/squad.entity");
 const challenge_entity_1 = require("../domain/entities/challenge.entity");
+const roulette_prize_entity_1 = require("../domain/entities/roulette-prize.entity");
+const roulette_spin_entity_1 = require("../domain/entities/roulette-spin.entity");
+const raffle_entity_1 = require("../domain/entities/raffle.entity");
+const raffle_task_entity_1 = require("../domain/entities/raffle-task.entity");
+const raffle_ticket_entity_1 = require("../domain/entities/raffle-ticket.entity");
+const collaboration_entity_1 = require("../domain/entities/collaboration.entity");
+const interview_entity_1 = require("../domain/entities/interview.entity");
+const podcast_entity_1 = require("../domain/entities/podcast.entity");
+const character_entity_1 = require("../domain/entities/character.entity");
 const admin_auth_service_1 = require("./services/admin-auth.service");
 const admin_auth_guard_1 = require("./guards/admin-auth.guard");
 const admin_auth_controller_1 = require("./controllers/admin-auth.controller");
@@ -33,6 +42,10 @@ const admin_referrals_controller_1 = require("./controllers/admin-referrals.cont
 const admin_products_controller_1 = require("./controllers/admin-products.controller");
 const admin_squads_controller_1 = require("./controllers/admin-squads.controller");
 const admin_challenges_controller_1 = require("./controllers/admin-challenges.controller");
+const admin_roulette_controller_1 = require("./controllers/admin-roulette.controller");
+const admin_raffles_controller_1 = require("./controllers/admin-raffles.controller");
+const admin_social_controller_1 = require("./controllers/admin-social.controller");
+const admin_characters_controller_1 = require("./controllers/admin-characters.controller");
 let AdminModule = class AdminModule {
 };
 exports.AdminModule = AdminModule;
@@ -51,6 +64,15 @@ exports.AdminModule = AdminModule = __decorate([
                 squad_entity_1.Squad,
                 squad_entity_1.SquadMember,
                 challenge_entity_1.Challenge,
+                roulette_prize_entity_1.RoulettePrize,
+                roulette_spin_entity_1.RouletteSpin,
+                raffle_entity_1.Raffle,
+                raffle_task_entity_1.RaffleTask,
+                raffle_ticket_entity_1.RaffleTicket,
+                collaboration_entity_1.Collaboration,
+                interview_entity_1.Interview,
+                podcast_entity_1.Podcast,
+                character_entity_1.Character,
             ]),
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
@@ -74,6 +96,10 @@ exports.AdminModule = AdminModule = __decorate([
             admin_products_controller_1.AdminProductsController,
             admin_squads_controller_1.AdminSquadsController,
             admin_challenges_controller_1.AdminChallengesController,
+            admin_roulette_controller_1.AdminRouletteController,
+            admin_raffles_controller_1.AdminRafflesController,
+            admin_social_controller_1.AdminSocialController,
+            admin_characters_controller_1.AdminCharactersController,
         ],
         providers: [admin_auth_service_1.AdminAuthService, admin_auth_guard_1.AdminAuthGuard],
         exports: [admin_auth_service_1.AdminAuthService, admin_auth_guard_1.AdminAuthGuard],

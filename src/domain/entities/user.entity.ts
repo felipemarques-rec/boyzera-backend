@@ -87,6 +87,18 @@ export class User {
   @Column({ nullable: true })
   lastLoginAt: Date;
 
+  @Column({ default: 0 })
+  loginStreak: number;
+
+  @Column({ nullable: true })
+  lastStreakDate: Date;
+
+  @Column({ default: false })
+  canSpinRoulette: boolean;
+
+  @Column({ nullable: true })
+  lastRouletteSpinAt: Date;
+
   @Column({ nullable: true })
   referrerId: string;
 

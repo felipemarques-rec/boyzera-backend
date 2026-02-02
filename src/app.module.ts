@@ -18,6 +18,10 @@ import { MinigameModule } from './infrastructure/minigame/minigame.module';
 import { ShopModule } from './infrastructure/shop/shop.module';
 import { BlockchainModule } from './infrastructure/blockchain/blockchain.module';
 import { SquadModule } from './infrastructure/squad/squad.module';
+import { RouletteModule } from './infrastructure/roulette/roulette.module';
+import { SocialModule } from './infrastructure/social/social.module';
+import { RaffleModule } from './infrastructure/raffle/raffle.module';
+import { CharacterModule } from './infrastructure/character/character.module';
 import { AdminModule } from './admin/admin.module';
 
 @Module({
@@ -44,6 +48,10 @@ import { AdminModule } from './admin/admin.module';
     ShopModule,
     BlockchainModule,
     SquadModule,
+    RouletteModule,
+    SocialModule,
+    RaffleModule,
+    CharacterModule,
     AdminModule,
   ],
   controllers: [AppController],

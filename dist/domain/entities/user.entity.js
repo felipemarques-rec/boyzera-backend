@@ -35,6 +35,10 @@ let User = class User {
     lastTapAt;
     lastEnergyUpdate;
     lastLoginAt;
+    loginStreak;
+    lastStreakDate;
+    canSpinRoulette;
+    lastRouletteSpinAt;
     referrerId;
     seasonId;
     isBanned;
@@ -140,6 +144,22 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", Date)
 ], User.prototype, "lastLoginAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    __metadata("design:type", Number)
+], User.prototype, "loginStreak", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Date)
+], User.prototype, "lastStreakDate", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], User.prototype, "canSpinRoulette", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Date)
+], User.prototype, "lastRouletteSpinAt", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

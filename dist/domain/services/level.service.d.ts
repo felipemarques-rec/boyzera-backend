@@ -18,7 +18,7 @@ export declare class LevelService {
     constructor(levelRepository: Repository<Level>);
     getAllLevels(): Promise<Level[]>;
     getLevelByValue(value: number): Promise<Level | null>;
-    calculateLevel(followers: bigint): Promise<Level>;
+    calculateLevel(followers: bigint): Promise<Level | null>;
     getNextLevel(currentLevel: number): Promise<Level | null>;
     checkLevelUp(user: User): Promise<LevelUpResult>;
     getProgressToNextLevel(user: User): Promise<{

@@ -19,6 +19,19 @@ import { UserBooster } from '../../domain/entities/user-booster.entity';
 import { WalletConnection } from '../../domain/entities/wallet-connection.entity';
 import { TokenDistribution } from '../../domain/entities/token-distribution.entity';
 import { Squad, SquadMember } from '../../domain/entities/squad.entity';
+import { RoulettePrize } from '../../domain/entities/roulette-prize.entity';
+import { RouletteSpin } from '../../domain/entities/roulette-spin.entity';
+import { Collaboration } from '../../domain/entities/collaboration.entity';
+import { UserCollaboration } from '../../domain/entities/user-collaboration.entity';
+import { Interview } from '../../domain/entities/interview.entity';
+import { UserInterview } from '../../domain/entities/user-interview.entity';
+import { Podcast } from '../../domain/entities/podcast.entity';
+import { UserPodcast } from '../../domain/entities/user-podcast.entity';
+import { Raffle } from '../../domain/entities/raffle.entity';
+import { RaffleTask } from '../../domain/entities/raffle-task.entity';
+import { RaffleTicket } from '../../domain/entities/raffle-ticket.entity';
+import { UserRaffleTask } from '../../domain/entities/user-raffle-task.entity';
+import { Character } from '../../domain/entities/character.entity';
 import { AdminUser } from '../../admin/entities/admin-user.entity';
 import { AppConfig } from '../../admin/entities/app-config.entity';
 
@@ -54,6 +67,19 @@ import { AppConfig } from '../../admin/entities/app-config.entity';
           TokenDistribution,
           Squad,
           SquadMember,
+          RoulettePrize,
+          RouletteSpin,
+          Collaboration,
+          UserCollaboration,
+          Interview,
+          UserInterview,
+          Podcast,
+          UserPodcast,
+          Raffle,
+          RaffleTask,
+          RaffleTicket,
+          UserRaffleTask,
+          Character,
           AdminUser,
           AppConfig,
         ],

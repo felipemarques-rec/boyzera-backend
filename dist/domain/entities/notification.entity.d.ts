@@ -1,4 +1,5 @@
 import { User } from './user.entity';
+import { Character } from './character.entity';
 export declare enum NotificationType {
     LEVEL_UP = "level_up",
     MISSION_COMPLETE = "mission_complete",
@@ -23,5 +24,7 @@ export declare class Notification {
     isRead: boolean;
     readAt: Date;
     actionUrl: string;
+    characterId: string;
+    character: Character;
     createdAt: Date;
 }

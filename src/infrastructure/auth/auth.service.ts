@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as crypto from 'crypto';
 import { Repository } from 'typeorm';
 import { User } from '../../domain/entities/user.entity';
@@ -14,6 +15,7 @@ export class AuthService {
     private userRepository: Repository<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async validateTelegramData(initData: string): Promise<any> {
@@ -117,6 +119,9 @@ export class AuthService {
     const payload = { sub: user.id, username: user.username };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    // Emit login event for login streak tracking
+    this.eventEmitter.emit('user.login', { userId: user.id });
 
     return {
       access_token: accessToken,

@@ -9,6 +9,19 @@ export interface GetNotificationsOptions {
   unreadOnly?: boolean;
 }
 
+export interface CharacterInfo {
+  id: string;
+  name: string;
+  displayName: string;
+  avatarUrl: string | null;
+  area: string;
+  customColors?: {
+    primary?: string;
+    secondary?: string;
+    accent?: string;
+  };
+}
+
 export interface NotificationResponse {
   id: string;
   type: string;
@@ -19,6 +32,7 @@ export interface NotificationResponse {
   actionUrl: string | null;
   isRead: boolean;
   createdAt: Date;
+  character?: CharacterInfo | null;
 }
 
 export interface NotificationsResult {
@@ -48,6 +62,7 @@ export class GetNotificationsUseCase {
     const [notifications, total] =
       await this.notificationRepository.findAndCount({
         where: whereCondition,
+        relations: ['character'],
         order: { createdAt: 'DESC' },
         take: limit,
         skip: offset,
@@ -68,6 +83,16 @@ export class GetNotificationsUseCase {
         actionUrl: n.actionUrl,
         isRead: n.isRead,
         createdAt: n.createdAt,
+        character: n.character
+          ? {
+              id: n.character.id,
+              name: n.character.name,
+              displayName: n.character.displayName || n.character.name,
+              avatarUrl: n.character.avatarUrl,
+              area: n.character.area,
+              customColors: n.character.customColors,
+            }
+          : null,
       })),
       total,
       unreadCount,

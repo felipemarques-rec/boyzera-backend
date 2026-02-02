@@ -8,6 +8,7 @@ import {
   Index,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Character } from './character.entity';
 
 export enum NotificationType {
   LEVEL_UP = 'level_up',
@@ -63,6 +64,13 @@ export class Notification {
 
   @Column({ nullable: true })
   actionUrl: string;
+
+  @Column({ nullable: true })
+  characterId: string;
+
+  @ManyToOne(() => Character, { nullable: true })
+  @JoinColumn({ name: 'characterId' })
+  character: Character;
 
   @CreateDateColumn()
   createdAt: Date;
