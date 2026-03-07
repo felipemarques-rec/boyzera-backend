@@ -34,6 +34,9 @@ export class Level {
   })
   rewardFollowers: bigint;
 
+  @Column({ type: 'float', default: 0.01 })
+  engagementLossRate: number;
+
   @Column({ nullable: true })
   skinUnlock: string;
 

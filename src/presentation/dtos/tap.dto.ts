@@ -14,6 +14,13 @@ export class BatchTapDto {
   clientHash?: string;
 }
 
+export class LevelProgressDto {
+  currentLevel: number;
+  progress: string;
+  required: string;
+  percentage: number;
+}
+
 export class TapResponseDto {
   success: boolean;
   tapsProcessed: number;
@@ -23,6 +30,7 @@ export class TapResponseDto {
   maxEnergy: number;
   combo: number;
   comboMultiplier: number;
+  levelProgress: LevelProgressDto;
   levelUp?: {
     previousLevel: number;
     newLevel: number;
