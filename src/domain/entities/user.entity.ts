@@ -78,6 +78,18 @@ export class User {
   @Column({ type: 'float', default: 0 })
   engagement: number;
 
+  @Column({ type: 'float', default: 0 })
+  hype: number;
+
+  @Column({ type: 'float', default: 0 })
+  dailyEngagement: number;
+
+  @Column({ default: 0 })
+  daysMissed: number;
+
+  @Column({ nullable: true })
+  lastHypeCalculation: Date;
+
   @Column({ nullable: true })
   lastTapAt: Date;
 
@@ -92,6 +104,9 @@ export class User {
 
   @Column({ nullable: true })
   lastStreakDate: Date;
+
+  @Column({ nullable: true })
+  lastDailyAwardDate: Date;
 
   @Column({ default: false })
   canSpinRoulette: boolean;

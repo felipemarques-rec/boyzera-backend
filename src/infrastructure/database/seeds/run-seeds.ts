@@ -1,6 +1,9 @@
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import { seedLevels } from './levels.seed';
+import { seedHypeConfig } from './hype-config.seed';
+import { seedDailyAwardConfig } from './daily-award-config.seed';
+import { seedGameItems } from './game-items.seed';
 import { Level } from '../../../domain/entities/level.entity';
 import { User } from '../../../domain/entities/user.entity';
 import { Upgrade } from '../../../domain/entities/upgrade.entity';
@@ -21,6 +24,10 @@ import { TokenDistribution } from '../../../domain/entities/token-distribution.e
 import { Squad, SquadMember } from '../../../domain/entities/squad.entity';
 import { AdminUser } from '../../../admin/entities/admin-user.entity';
 import { AppConfig } from '../../../admin/entities/app-config.entity';
+import { HypeConfig } from '../../../domain/entities/hype-config.entity';
+import { DailyAwardConfig } from '../../../domain/entities/daily-award-config.entity';
+import { GameItem } from '../../../domain/entities/game-item.entity';
+import { UserItem } from '../../../domain/entities/user-item.entity';
 
 config();
 
@@ -54,6 +61,10 @@ async function runSeeds() {
       SquadMember,
       AdminUser,
       AppConfig,
+      HypeConfig,
+      DailyAwardConfig,
+      GameItem,
+      UserItem,
     ],
     synchronize: false,
     logging: true,
@@ -65,6 +76,9 @@ async function runSeeds() {
 
     // Run seeds
     await seedLevels(dataSource);
+    await seedHypeConfig(dataSource);
+    await seedDailyAwardConfig(dataSource);
+    await seedGameItems(dataSource);
 
     console.log('All seeds completed successfully!');
   } catch (error) {

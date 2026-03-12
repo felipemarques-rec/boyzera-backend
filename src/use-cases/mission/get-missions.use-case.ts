@@ -13,6 +13,7 @@ export interface MissionWithProgress {
   requirement: Mission['requirement'];
   reward: Mission['reward'];
   iconName: string | null;
+  imageUrl?: string | null;
   progress: number;
   target: number;
   completed: boolean;
@@ -104,6 +105,48 @@ export class GetMissionsUseCase {
 
   async getAchievements(userId: string): Promise<MissionWithProgress[]> {
     return this.execute(userId, MissionType.ACHIEVEMENT);
+  }
+
+  async getRecentAchievements(userId: string, limit: number = 5): Promise<MissionWithProgress[]> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Get completed achievements ordered by completedAt desc
+    const completedUserMissions = await this.userMissionRepository.find({
+      where: {
+        userId,
+        completed: true,
+      },
+      relations: ['mission'],
+      order: { completedAt: 'DESC' },
+    });
+
+    // Filter only achievement type missions and limit
+    const achievementMissions = completedUserMissions
+      .filter(um => um.mission?.type === MissionType.ACHIEVEMENT)
+      .slice(0, limit);
+
+    return achievementMissions.map((userMission) => {
+      const mission = userMission.mission;
+      return {
+        id: mission.id,
+        type: mission.type,
+        title: mission.title,
+        description: mission.description,
+        requirement: mission.requirement,
+        reward: mission.reward,
+        iconName: mission.iconName,
+        imageUrl: mission.imageUrl,
+        progress: userMission.progress,
+        target: mission.requirement.target,
+        completed: userMission.completed,
+        claimed: userMission.claimed,
+        completedAt: userMission.completedAt,
+        periodEnd: null,
+      };
+    });
   }
 
   private getPeriodStart(date: Date): Date {

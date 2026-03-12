@@ -22,6 +22,7 @@ import { RouletteModule } from './infrastructure/roulette/roulette.module';
 import { SocialModule } from './infrastructure/social/social.module';
 import { RaffleModule } from './infrastructure/raffle/raffle.module';
 import { CharacterModule } from './infrastructure/character/character.module';
+import { ItemModule } from './infrastructure/item/item.module';
 import { AdminModule } from './admin/admin.module';
 
 @Module({
@@ -52,6 +53,7 @@ import { AdminModule } from './admin/admin.module';
     SocialModule,
     RaffleModule,
     CharacterModule,
+    ItemModule,
     AdminModule,
   ],
   controllers: [AppController],

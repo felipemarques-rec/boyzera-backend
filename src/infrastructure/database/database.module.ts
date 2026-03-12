@@ -32,6 +32,10 @@ import { RaffleTask } from '../../domain/entities/raffle-task.entity';
 import { RaffleTicket } from '../../domain/entities/raffle-ticket.entity';
 import { UserRaffleTask } from '../../domain/entities/user-raffle-task.entity';
 import { Character } from '../../domain/entities/character.entity';
+import { HypeConfig } from '../../domain/entities/hype-config.entity';
+import { DailyAwardConfig } from '../../domain/entities/daily-award-config.entity';
+import { GameItem } from '../../domain/entities/game-item.entity';
+import { UserItem } from '../../domain/entities/user-item.entity';
 import { AdminUser } from '../../admin/entities/admin-user.entity';
 import { AppConfig } from '../../admin/entities/app-config.entity';
 
@@ -80,6 +84,10 @@ import { AppConfig } from '../../admin/entities/app-config.entity';
           RaffleTicket,
           UserRaffleTask,
           Character,
+          HypeConfig,
+          DailyAwardConfig,
+          GameItem,
+          UserItem,
           AdminUser,
           AppConfig,
         ],

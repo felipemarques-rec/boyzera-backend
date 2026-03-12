@@ -40,6 +40,11 @@ export class MissionController {
     return this.getMissionsUseCase.getAchievements(req.user.id);
   }
 
+  @Get('achievements/recent')
+  async getRecentAchievements(@Request() req, @Query('limit') limit?: number) {
+    return this.getMissionsUseCase.getRecentAchievements(req.user.id, limit || 5);
+  }
+
   @Post(':id/claim')
   async claimReward(@Request() req, @Param('id') missionId: string) {
     return this.claimMissionRewardUseCase.execute(req.user.id, missionId);

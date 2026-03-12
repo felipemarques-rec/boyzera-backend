@@ -60,9 +60,10 @@ export class AuthService {
     });
 
     // Create default nickname from Telegram data
-    const defaultNickname = telegramUser.username
-      || `${telegramUser.first_name || ''}${telegramUser.last_name ? ' ' + telegramUser.last_name : ''}`.trim()
-      || `User${telegramUser.id}`;
+    const defaultNickname =
+      telegramUser.username ||
+      `${telegramUser.first_name || ''}${telegramUser.last_name ? ' ' + telegramUser.last_name : ''}`.trim() ||
+      `User${telegramUser.id}`;
 
     if (!user) {
       user = this.userRepository.create({
@@ -93,7 +94,10 @@ export class AuthService {
         user.username = telegramUser.username;
         needsUpdate = true;
       }
-      if (telegramUser.first_name && user.firstName !== telegramUser.first_name) {
+      if (
+        telegramUser.first_name &&
+        user.firstName !== telegramUser.first_name
+      ) {
         user.firstName = telegramUser.first_name;
         needsUpdate = true;
       }
@@ -121,7 +125,10 @@ export class AuthService {
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     // Emit login event for login streak tracking
-    this.eventEmitter.emit('user.login', { userId: user.id });
+    this.eventEmitter.emit('user.login', {
+      userId: user.id,
+      streak: user.loginStreak || 0,
+    });
 
     return {
       access_token: accessToken,
