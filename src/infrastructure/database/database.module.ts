@@ -91,9 +91,7 @@ import { AppConfig } from '../../admin/entities/app-config.entity';
           AdminUser,
           AppConfig,
         ],
-        synchronize: ['development', 'test'].includes(
-          configService.get<string>('NODE_ENV', 'development'),
-        ),
+        synchronize: true,
         logging: configService.get<string>('NODE_ENV') === 'development',
       }),
     }),
