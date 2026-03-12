@@ -20,8 +20,9 @@ export class PassiveIncomeService {
     );
   }
 
-  calculatePassiveIncome(user: User): PassiveIncomeResult {
-    if (user.profitPerHour <= 0) {
+  calculatePassiveIncome(user: User, bonusFollowersPerHour: number = 0): PassiveIncomeResult {
+    const totalRate = user.profitPerHour + bonusFollowersPerHour;
+    if (totalRate <= 0) {
       return {
         earnedFollowers: BigInt(0),
         hoursOffline: 0,
@@ -38,9 +39,9 @@ export class PassiveIncomeService {
     // Cap at maximum offline hours
     const cappedHours = Math.min(hoursOffline, this.maxOfflineHours);
 
-    // Calculate earned followers
+    // Calculate earned followers (base + equipped item bonuses)
     const earnedFollowers = BigInt(
-      Math.floor(cappedHours * user.profitPerHour),
+      Math.floor(cappedHours * totalRate),
     );
 
     return {

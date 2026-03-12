@@ -7,6 +7,7 @@ import {
   PassiveIncomeService,
   PassiveIncomeResult,
 } from '../../domain/services/passive-income.service';
+import { ItemService } from '../../domain/services/item.service';
 import { RedisService } from '../../infrastructure/redis/redis.service';
 
 export interface CollectIncomeResponse extends PassiveIncomeResult {
@@ -19,6 +20,7 @@ export class CollectPassiveIncomeUseCase {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private passiveIncomeService: PassiveIncomeService,
+    private itemService: ItemService,
     private redisService: RedisService,
     private eventEmitter: EventEmitter2,
   ) {}
@@ -29,7 +31,16 @@ export class CollectPassiveIncomeUseCase {
       throw new Error('User not found');
     }
 
-    const incomeResult = this.passiveIncomeService.calculatePassiveIncome(user);
+    // Include equipped item bonuses in passive income
+    let bonusPerHour = 0;
+    try {
+      const bonuses = await this.itemService.getEquippedBonuses(userId);
+      bonusPerHour = bonuses.totalFollowersPerHourBonus;
+    } catch {
+      // Ignore — use base rate only
+    }
+
+    const incomeResult = this.passiveIncomeService.calculatePassiveIncome(user, bonusPerHour);
 
     if (incomeResult.wasCollected) {
       // Update user followers
