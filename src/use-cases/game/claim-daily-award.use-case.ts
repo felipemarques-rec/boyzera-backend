@@ -42,6 +42,45 @@ export class ClaimDailyAwardUseCase {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
+  async preview(userId: string): Promise<DailyAwardClaimResponse | null> {
+    const now = new Date();
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) return null;
+
+    // Already claimed today → no award to show
+    if (
+      user.lastDailyAwardDate &&
+      this.isSameDate(user.lastDailyAwardDate, now)
+    ) {
+      return null;
+    }
+
+    const config = await this.dailyAwardConfigRepository.findOne({
+      where: { isActive: true },
+    });
+    if (!config) return null;
+
+    const todayStart = this.startOfDay(now);
+    const streak = this.calculateUpdatedStreak(user, todayStart);
+    const award = this.dailyAwardService.calculateDailyFollowersGain(
+      user.followers,
+      Number(user.dailyEngagement) || 0,
+      streak,
+      config,
+    );
+
+    return {
+      date: this.formatDate(now),
+      econ_version: config.version,
+      streak,
+      engagement: award.engagement,
+      delta_followers: award.deltaFollowers.toString(),
+      followers_balance_before: user.followers.toString(),
+      followers_balance_after: (user.followers + award.deltaFollowers).toString(),
+    };
+  }
+
   async execute(userId: string): Promise<DailyAwardClaimResponse> {
     const now = new Date();
     const todayStart = this.startOfDay(now);

@@ -99,12 +99,12 @@ export class GameController {
     // Get all levels for progress display
     const levels = await this.levelService.getAllLevels();
 
-    // Claim daily followers award (idempotent by date)
+    // Preview daily award (do NOT claim — frontend claims via POST /daily-award/claim)
     let dailyAward: any = null;
     try {
-      dailyAward = await this.claimDailyAwardUseCase.execute(user.id);
+      dailyAward = await this.claimDailyAwardUseCase.preview(user.id);
     } catch (error) {
-      console.error('Error claiming daily award:', error);
+      console.error('Error previewing daily award:', error);
     }
 
     // Process daily hype if not yet processed today
@@ -117,7 +117,7 @@ export class GameController {
 
     // Reload user if hype was updated
     const currentUser =
-      hypeResult || dailyAward
+      hypeResult
         ? await this.userRepository.findOne({ where: { id: req.user.id } })
         : user;
     const finalUser = currentUser || user;
