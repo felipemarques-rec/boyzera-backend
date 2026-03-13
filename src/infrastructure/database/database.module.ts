@@ -38,6 +38,7 @@ import { GameItem } from '../../domain/entities/game-item.entity';
 import { UserItem } from '../../domain/entities/user-item.entity';
 import { AdminUser } from '../../admin/entities/admin-user.entity';
 import { AppConfig } from '../../admin/entities/app-config.entity';
+import { DatabaseSeederService } from './database-seeder.service';
 
 @Module({
   imports: [
@@ -98,5 +99,6 @@ import { AppConfig } from '../../admin/entities/app-config.entity';
       }),
     }),
   ],
+  providers: [DatabaseSeederService],
 })
 export class DatabaseModule {}
