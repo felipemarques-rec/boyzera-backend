@@ -26,13 +26,14 @@ export enum ItemRarity {
 
 /**
  * Slots de equipamento:
- *   - VEHICLE: 1 slot (carro OU moto)
+ *   - VEHICLE_CAR: 1 slot (1 carro)
+ *   - VEHICLE_MOTORCYCLE: 1 slot (1 moto)
  *   - CLOTHING: 2 slots (qualquer combinação de shirt/shorts/jacket/pants)
  *   - SCENARIO: 1 slot
  */
 export const EQUIP_SLOT_MAP: Record<string, string> = {
-  [ItemCategory.VEHICLE_CAR]: 'vehicle',
-  [ItemCategory.VEHICLE_MOTORCYCLE]: 'vehicle',
+  [ItemCategory.VEHICLE_CAR]: 'vehicle_car',
+  [ItemCategory.VEHICLE_MOTORCYCLE]: 'vehicle_motorcycle',
   [ItemCategory.CLOTHING_SHIRT]: 'clothing',
   [ItemCategory.CLOTHING_SHORTS]: 'clothing',
   [ItemCategory.CLOTHING_JACKET]: 'clothing',
@@ -41,7 +42,8 @@ export const EQUIP_SLOT_MAP: Record<string, string> = {
 };
 
 export const SLOT_LIMITS: Record<string, number> = {
-  vehicle: 1,
+  vehicle_car: 1,
+  vehicle_motorcycle: 1,
   clothing: 2,
   scenario: 1,
 };
