@@ -4,6 +4,7 @@ import { seedLevels } from './levels.seed';
 import { seedHypeConfig } from './hype-config.seed';
 import { seedDailyAwardConfig } from './daily-award-config.seed';
 import { seedGameItems } from './game-items.seed';
+import { seedPodcasts } from './podcasts.seed';
 import { Level } from '../../../domain/entities/level.entity';
 import { User } from '../../../domain/entities/user.entity';
 import { Upgrade } from '../../../domain/entities/upgrade.entity';
@@ -28,6 +29,8 @@ import { HypeConfig } from '../../../domain/entities/hype-config.entity';
 import { DailyAwardConfig } from '../../../domain/entities/daily-award-config.entity';
 import { GameItem } from '../../../domain/entities/game-item.entity';
 import { UserItem } from '../../../domain/entities/user-item.entity';
+import { Podcast } from '../../../domain/entities/podcast.entity';
+import { UserPodcast } from '../../../domain/entities/user-podcast.entity';
 
 config();
 
@@ -65,6 +68,8 @@ async function runSeeds() {
       DailyAwardConfig,
       GameItem,
       UserItem,
+      Podcast,
+      UserPodcast,
     ],
     synchronize: false,
     logging: true,
@@ -79,6 +84,7 @@ async function runSeeds() {
     await seedHypeConfig(dataSource);
     await seedDailyAwardConfig(dataSource);
     await seedGameItems(dataSource);
+    await seedPodcasts(dataSource);
 
     console.log('All seeds completed successfully!');
   } catch (error) {

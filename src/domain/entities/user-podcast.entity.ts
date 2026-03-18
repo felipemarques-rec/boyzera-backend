@@ -11,7 +11,7 @@ import { User } from './user.entity';
 import { Podcast } from './podcast.entity';
 
 @Entity('user_podcasts')
-@Index(['userId', 'podcastId'], { unique: true })
+@Index(['userId', 'podcastId'])
 export class UserPodcast {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -33,10 +33,14 @@ export class UserPodcast {
   @Column({ default: false })
   isCompleted: boolean;
 
+  @Column({ default: true })
+  wasSuccessful: boolean;
+
   @Column({ type: 'jsonb', nullable: true })
   rewardsClaimed: {
     followers?: number;
     gems?: number;
+    engagementChange?: number;
   };
 
   @CreateDateColumn()

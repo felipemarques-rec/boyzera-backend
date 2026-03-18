@@ -56,13 +56,36 @@ export class Podcast {
     default: 0,
     transformer: bigintTransformer,
   })
+  requiredFollowers: bigint;
+
+  @Column({ type: 'float', default: 50 })
+  successChance: number; // 0-100
+
+  @Column({ default: 0 })
+  cooldownMinutes: number;
+
+  @Column({
+    type: 'bigint',
+    default: 0,
+    transformer: bigintTransformer,
+  })
   followersReward: bigint;
+
+  @Column({
+    type: 'bigint',
+    default: 0,
+    transformer: bigintTransformer,
+  })
+  followersLoss: bigint;
 
   @Column({ default: 0 })
   gemsReward: number;
 
   @Column({ type: 'float', default: 0 })
   engagementChange: number;
+
+  @Column({ type: 'float', default: 0 })
+  engagementLoss: number;
 
   @Column({ default: 1 })
   requiredLevel: number;
