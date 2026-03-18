@@ -274,26 +274,50 @@ export class SocialService {
       order: { sortOrder: 'ASC' },
     });
 
-    // Get user's participation
     const userPodcasts = await this.userPodcastRepository.find({
       where: { userId },
+      order: { participatedAt: 'DESC' },
     });
 
-    const userPodcastMap = new Map(
-      userPodcasts.map((up) => [up.podcastId, up]),
-    );
+    const now = new Date();
 
     return podcasts.map((podcast) => {
-      const userPodcast = userPodcastMap.get(podcast.id);
+      const podcastParticipations = userPodcasts.filter((up) => up.podcastId === podcast.id);
+      const inProgress = podcastParticipations.find((up) => !up.isCompleted);
+      const lastCompleted = podcastParticipations.find((up) => up.isCompleted);
+
+      const meetsFollowers = BigInt(user.followers) >= BigInt(podcast.requiredFollowers);
+
+      let cooldownEndsAt: Date | null = null;
+      let onCooldown = false;
+
+      if (lastCompleted && podcast.cooldownMinutes > 0) {
+        cooldownEndsAt = new Date(lastCompleted.completedAt.getTime() + podcast.cooldownMinutes * 60 * 1000);
+        onCooldown = now < cooldownEndsAt;
+      }
+
+      let completesAt: Date | null = null;
+      let canComplete = false;
+
+      if (inProgress) {
+        completesAt = new Date(inProgress.participatedAt.getTime() + podcast.durationMinutes * 60 * 1000);
+        canComplete = now >= completesAt;
+      }
+
       return {
         ...this.formatPodcast(podcast),
-        isCompleted: userPodcast?.isCompleted || false,
-        canParticipate: !userPodcast,
+        canParticipate: meetsFollowers && !onCooldown && !inProgress,
+        inProgress: !!inProgress,
+        canComplete,
+        completesAt: inProgress ? completesAt : null,
+        onCooldown,
+        cooldownEndsAt: onCooldown ? cooldownEndsAt : null,
+        meetsFollowers,
       };
     });
   }
 
-  async participateInPodcast(userId: string, podcastId: string) {
+  async startPodcast(userId: string, podcastId: string) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
 
@@ -303,56 +327,135 @@ export class SocialService {
     if (!podcast) throw new NotFoundException('Podcast not found');
 
     if (!podcast.isActive) {
-      throw new BadRequestException('This podcast is no longer available');
+      throw new BadRequestException('Este podcast não está mais disponível');
     }
 
     if (user.level < podcast.requiredLevel) {
-      throw new BadRequestException(`You need to be level ${podcast.requiredLevel} to participate`);
+      throw new BadRequestException(`Você precisa ser nível ${podcast.requiredLevel} para participar`);
     }
 
-    // Check if already participated
-    const existing = await this.userPodcastRepository.findOne({
-      where: { userId, podcastId },
+    if (BigInt(user.followers) < BigInt(podcast.requiredFollowers)) {
+      throw new BadRequestException(`Você precisa de ${podcast.requiredFollowers} seguidores para participar`);
+    }
+
+    // Check cooldown from last completed participation
+    const lastCompleted = await this.userPodcastRepository.findOne({
+      where: { userId, podcastId, isCompleted: true },
+      order: { completedAt: 'DESC' },
     });
 
-    if (existing) {
-      throw new BadRequestException('You have already participated in this podcast');
+    if (lastCompleted && podcast.cooldownMinutes > 0) {
+      const cooldownEndsAt = new Date(lastCompleted.completedAt.getTime() + podcast.cooldownMinutes * 60 * 1000);
+      if (new Date() < cooldownEndsAt) {
+        throw new BadRequestException('Aguarde o cooldown terminar para participar novamente');
+      }
     }
 
-    // Apply rewards
-    const rewards: { followers?: number; gems?: number } = {};
+    // Check if already has an in-progress participation
+    const inProgress = await this.userPodcastRepository.findOne({
+      where: { userId, podcastId, isCompleted: false },
+    });
 
-    if (podcast.followersReward) {
-      user.followers = BigInt(user.followers) + BigInt(podcast.followersReward);
-      rewards.followers = Number(podcast.followersReward);
+    if (inProgress) {
+      throw new BadRequestException('Você já está participando deste podcast');
     }
 
-    if (podcast.gemsReward) {
-      user.gems += podcast.gemsReward;
-      rewards.gems = podcast.gemsReward;
+    // Create in-progress participation
+    const userPodcast = this.userPodcastRepository.create({
+      userId,
+      podcastId,
+      isCompleted: false,
+      wasSuccessful: false,
+    });
+    await this.userPodcastRepository.save(userPodcast);
+
+    const completesAt = new Date(Date.now() + podcast.durationMinutes * 60 * 1000);
+
+    return {
+      success: true,
+      message: 'Podcast iniciado!',
+      participationId: userPodcast.id,
+      durationMinutes: podcast.durationMinutes,
+      completesAt,
+    };
+  }
+
+  async completePodcast(userId: string, podcastId: string) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const podcast = await this.podcastRepository.findOne({
+      where: { id: podcastId },
+    });
+    if (!podcast) throw new NotFoundException('Podcast not found');
+
+    // Find in-progress participation
+    const participation = await this.userPodcastRepository.findOne({
+      where: { userId, podcastId, isCompleted: false },
+    });
+
+    if (!participation) {
+      throw new BadRequestException('Você não está participando deste podcast');
     }
 
-    if (podcast.engagementChange) {
-      user.engagement = Math.max(0, Math.min(100, user.engagement + podcast.engagementChange));
+    // Check if execution time has passed
+    const startedAt = participation.participatedAt;
+    const completesAt = new Date(startedAt.getTime() + podcast.durationMinutes * 60 * 1000);
+
+    if (new Date() < completesAt) {
+      throw new BadRequestException('O tempo de execução ainda não terminou');
+    }
+
+    // Roll success chance
+    const roll = Math.random() * 100;
+    const wasSuccessful = roll < podcast.successChance;
+
+    const rewards: { followers?: number; gems?: number; engagementChange?: number } = {};
+
+    if (wasSuccessful) {
+      if (podcast.followersReward) {
+        user.followers = BigInt(user.followers) + BigInt(podcast.followersReward);
+        rewards.followers = Number(podcast.followersReward);
+      }
+
+      if (podcast.gemsReward) {
+        user.gems += podcast.gemsReward;
+        rewards.gems = podcast.gemsReward;
+      }
+
+      if (podcast.engagementChange) {
+        user.engagement = Math.min(100, user.engagement + podcast.engagementChange);
+        rewards.engagementChange = podcast.engagementChange;
+      }
+    } else {
+      if (podcast.followersLoss) {
+        const loss = BigInt(podcast.followersLoss);
+        user.followers = BigInt(user.followers) > loss
+          ? BigInt(user.followers) - loss
+          : BigInt(0);
+        rewards.followers = -Number(podcast.followersLoss);
+      }
+
+      if (podcast.engagementLoss) {
+        user.engagement = Math.max(0, user.engagement - podcast.engagementLoss);
+        rewards.engagementChange = -podcast.engagementLoss;
+      }
     }
 
     await this.userRepository.save(user);
 
-    // Create participation record
-    const userPodcast = this.userPodcastRepository.create({
-      userId,
-      podcastId,
-      isCompleted: true,
-      completedAt: new Date(),
-      rewardsClaimed: rewards,
-    });
-    await this.userPodcastRepository.save(userPodcast);
+    // Update participation record
+    participation.isCompleted = true;
+    participation.wasSuccessful = wasSuccessful;
+    participation.completedAt = new Date();
+    participation.rewardsClaimed = rewards;
+    await this.userPodcastRepository.save(participation);
 
     return {
       success: true,
-      message: 'Podcast completed!',
+      wasSuccessful,
+      message: wasSuccessful ? 'Podcast concluído com sucesso!' : 'Você falhou no podcast...',
       rewards,
-      engagementChange: podcast.engagementChange,
     };
   }
 
@@ -407,9 +510,14 @@ export class SocialService {
       imageUrl: podcast.imageUrl,
       audioUrl: podcast.audioUrl,
       durationMinutes: podcast.durationMinutes,
+      requiredFollowers: podcast.requiredFollowers.toString(),
+      successChance: podcast.successChance,
+      cooldownMinutes: podcast.cooldownMinutes,
       followersReward: podcast.followersReward.toString(),
+      followersLoss: podcast.followersLoss.toString(),
       gemsReward: podcast.gemsReward,
       engagementChange: podcast.engagementChange,
+      engagementLoss: podcast.engagementLoss,
       requiredLevel: podcast.requiredLevel,
     };
   }

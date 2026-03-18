@@ -65,11 +65,19 @@ export class SocialController {
     return this.socialService.getPodcasts(req.user.id);
   }
 
-  @Post('podcasts/:id/participate')
-  async participateInPodcast(
+  @Post('podcasts/:id/start')
+  async startPodcast(
     @Request() req,
     @Param('id') podcastId: string,
   ) {
-    return this.socialService.participateInPodcast(req.user.id, podcastId);
+    return this.socialService.startPodcast(req.user.id, podcastId);
+  }
+
+  @Post('podcasts/:id/complete')
+  async completePodcast(
+    @Request() req,
+    @Param('id') podcastId: string,
+  ) {
+    return this.socialService.completePodcast(req.user.id, podcastId);
   }
 }
