@@ -1,0 +1,71 @@
+# Production compose for the EC2 (3.216.123.215).
+# Lives at /opt/boyzera/docker-compose.prod.yml on the server.
+# Nginx (host, NOT containerized) terminates TLS and proxies to backend:5001.
+# IMAGE_OWNER and IMAGE_TAG are injected by the GitHub Actions deploy step.
+
+services:
+  backend:
+    image: ghcr.io/${IMAGE_OWNER}/boyzera-backend:${IMAGE_TAG:-latest}
+    container_name: boyzera-backend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      # Bind only on loopback — Nginx (host) is the public face.
+      - "127.0.0.1:5001:5001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks: [boyzera_net]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: boyzera-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # No `ports:` block — Postgres is reachable only through the compose network.
+    networks: [boyzera_net]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:7-alpine
+    container_name: boyzera-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    # No `ports:` block — Redis is reachable only through the compose network.
+    networks: [boyzera_net]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  boyzera_net:
+    driver: bridge

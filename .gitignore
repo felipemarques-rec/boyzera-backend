@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Build outputs
+dist/
+build/
+.turbo/
+
+# Tests / coverage
+coverage/
+
+# Env files — NEVER commit real secrets
+.env
+.env.local
+.env.*.local
+
+# Deploy server-side state (only the templates are commitable)
+deploy/.env
+deploy/.env.local
+deploy/.env.production
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Misc
+.cache/
+*.local
+
+# Credentials / keys — never commit
+*.pem
+*.key
+*.crt
+*.p12
+
+# Local TypeORM/TS build caches
+tsconfig.tsbuildinfo
