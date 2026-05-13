@@ -19,7 +19,9 @@ export const dataSourceOptions: DataSourceOptions = {
   migrations: isProduction
     ? ['dist/infrastructure/database/migrations/*.js']
     : ['src/infrastructure/database/migrations/*.ts'],
-  synchronize: false,
+  // Set DB_SYNCHRONIZE=true on a fresh DB to let TypeORM create the schema
+  // from entities, then flip back to false. Off by default.
+  synchronize: process.env.DB_SYNCHRONIZE === 'true',
   logging: process.env.NODE_ENV === 'development',
   ssl: useSSL ? { rejectUnauthorized: false } : false,
 };
